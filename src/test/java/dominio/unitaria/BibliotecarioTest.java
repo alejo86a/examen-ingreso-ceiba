@@ -1,5 +1,6 @@
 package dominio.unitaria;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -79,15 +80,95 @@ public class BibliotecarioTest {
         RepositorioPrestamo repositorioPrestamo = mock(RepositorioPrestamo.class);
 		RepositorioLibro repositorioLibro = mock(RepositorioLibro.class);
 
-		when(repositorioPrestamo.obtenerLibroPrestadoPorIsbn(ISBN)).thenReturn(libro);
+        when(repositorioPrestamo.obtenerLibroPrestadoPorIsbn(libro.getIsbn())).thenReturn(null);
+        when(repositorioLibro.obtenerPorIsbn(libro.getIsbn())).thenReturn(libro);
 
 		Bibliotecario bibliotecario = new Bibliotecario(repositorioLibro, repositorioPrestamo);
 
 		// act
-		String respuesta = bibliotecario.prestar(libro.getIsbn(), NOMBRE_USUARIO);
-
-		// assert
-        Assert.assertEquals(respuesta, Mensajes.ERROR.get());
-
+        try{
+            String respuesta = bibliotecario.prestar(libro.getIsbn(), NOMBRE_USUARIO);
+        } catch (Exception e) {
+            // assert
+            assertEquals(e.getMessage(), Mensajes.EXITO.get());
+        }
 	}
+
+    @Test
+    public void prestarLibroYaPrestadoTest() {
+
+        // arrange
+        LibroTestDataBuilder libroTestDataBuilder = new LibroTestDataBuilder();
+
+        Libro libro = libroTestDataBuilder.build();
+
+        RepositorioPrestamo repositorioPrestamo = mock(RepositorioPrestamo.class);
+        RepositorioLibro repositorioLibro = mock(RepositorioLibro.class);
+
+        when(repositorioPrestamo.obtenerLibroPrestadoPorIsbn(libro.getIsbn())).thenReturn(libro);
+        when(repositorioLibro.obtenerPorIsbn(libro.getIsbn())).thenReturn(libro);
+
+        Bibliotecario bibliotecario = new Bibliotecario(repositorioLibro, repositorioPrestamo);
+
+        // act
+        try{
+            String respuesta = bibliotecario.prestar(libro.getIsbn(), NOMBRE_USUARIO);
+        } catch (Exception e) {
+            // assert
+            assertEquals(e.getMessage(), Mensajes.YAPRESTADO.get());
+        }
+    }
+
+    @Test
+    public void prestarLibroPalindromo() {
+
+        // arrange
+        LibroTestDataBuilder libroTestDataBuilder = new LibroTestDataBuilder().
+                conTitulo(NOMBRE_LIBRO).
+                conIsbn(ISBNPALINDROMO).
+                conAnio(ANIO);
+
+        Libro libro = libroTestDataBuilder.build();
+
+        RepositorioPrestamo repositorioPrestamo = mock(RepositorioPrestamo.class);
+        RepositorioLibro repositorioLibro = mock(RepositorioLibro.class);
+
+        when(repositorioPrestamo.obtenerLibroPrestadoPorIsbn(libro.getIsbn())).thenReturn(null);
+        when(repositorioLibro.obtenerPorIsbn(libro.getIsbn())).thenReturn(libro);
+
+        Bibliotecario bibliotecario = new Bibliotecario(repositorioLibro, repositorioPrestamo);
+
+        // act
+        try{
+            String respuesta = bibliotecario.prestar(libro.getIsbn(), NOMBRE_USUARIO);
+        } catch (Exception e) {
+            // assert
+            assertEquals(e.getMessage(), Mensajes.ERRORPALINDROMO.get());
+        }
+    }
+
+    @Test
+    public void noEncuentraLibroBD() {
+
+        // arrange
+        LibroTestDataBuilder libroTestDataBuilder = new LibroTestDataBuilder();
+
+        Libro libro = libroTestDataBuilder.build();
+
+        RepositorioPrestamo repositorioPrestamo = mock(RepositorioPrestamo.class);
+        RepositorioLibro repositorioLibro = mock(RepositorioLibro.class);
+
+        when(repositorioPrestamo.obtenerLibroPrestadoPorIsbn(libro.getIsbn())).thenReturn(null);
+        when(repositorioLibro.obtenerPorIsbn(libro.getIsbn())).thenReturn(null);
+
+        Bibliotecario bibliotecario = new Bibliotecario(repositorioLibro, repositorioPrestamo);
+
+        // act
+        try{
+            String respuesta = bibliotecario.prestar(libro.getIsbn(), NOMBRE_USUARIO);
+        } catch (Exception e) {
+            // assert
+            assertEquals(e.getMessage(), Mensajes.ERROR.get());
+        }
+    }
 }
