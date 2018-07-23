@@ -25,4 +25,8 @@ public class Libro {
 		return isbn;
 	}
 
+	public boolean esPalindromo() {
+		return isbn.equals(new StringBuilder(isbn).reverse().toString());
+	}
+
 }
