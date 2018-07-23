@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class Bibliotecario {
 
-	public static final String EL_LIBRO_NO_SE_ENCUENTRA_DISPONIBLE = "El libro no se encuentra disponible";
+	public static final String EL_LIBRO_NO_SE_ENCUENTRA_DISPONIBLE = "El libro ya fue prestado, y no se puede prestar mas de una vez.";
 
 	private RepositorioLibro repositorioLibro;
 	private RepositorioPrestamo repositorioPrestamo;
@@ -21,19 +21,33 @@ public class Bibliotecario {
 
 	}
 
-	public String prestar(String isbn) {
-		Libro libro = repositorioLibro.obtenerPorIsbn(isbn);
+	public String prestar(String isbn, String nombreUsuario) {
 
-		Prestamo prestamo = new Prestamo(new Date(), libro, "alejo");
+		Libro libroPrestado = repositorioPrestamo.obtenerLibroPrestadoPorIsbn(isbn);
+		if(libroPrestado==null) {
+			Libro libro = repositorioLibro.obtenerPorIsbn(isbn);
+			if(libro != null ) {
+				if (!libro.esPalindromo()) {
+					Prestamo newPrestamo = new Prestamo(new Date(), libro, nombreUsuario);
+					repositorioPrestamo.agregar(newPrestamo);
+				} else {
+					throw new PrestamoException(Mensajes.ERRORPALINDROMO.get());
+				}
+			} else {
+				return Mensajes.ERROR.get();
+			}
 
-		repositorioPrestamo.agregar(prestamo);
+		} else {
+			throw new PrestamoException(Mensajes.YAPRESTADO.get());
+		}
 
 		return Mensajes.EXITO.get();
-
 	}
 
 	public boolean esPrestado(String isbn) {
-		return true;
+
+		Libro libroPrestado = repositorioPrestamo.obtenerLibroPrestadoPorIsbn(isbn);
+		return objPrestamo==null?false:true;
 	}
 
 }

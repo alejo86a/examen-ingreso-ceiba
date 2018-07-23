@@ -18,6 +18,12 @@ import testdatabuilder.PrestamoTestDataBuilder;
 
 public class BibliotecarioTest {
 
+    private static final int ANIO = 2010;
+    private static final String ISBN = "1234";
+    private static final String ISBNPALINDROMO = "12321";
+    private static final String NOMBRE_LIBRO = "Cien años de soledad";
+    private static final String NOMBRE_USUARIO = "Jose Alejandro Berrio Marin";
+
 	@Test
 	public void esPrestadoTest() {
 		
@@ -66,21 +72,22 @@ public class BibliotecarioTest {
 	public void prestarLibroTest() {
 
 		// arrange
-		String CIEN_ANIOS_SOLEDAD = "Cien anios de Soledad";
-		Libro libro = new LibroTestDataBuilder().conTitulo(CIEN_ANIOS_SOLEDAD).build();
+        LibroTestDataBuilder libroTestDataBuilder = new LibroTestDataBuilder();
 
-		RepositorioPrestamo repositorioPrestamo = mock(RepositorioPrestamo.class);
+        Libro libro = libroTestDataBuilder.build();
+
+        RepositorioPrestamo repositorioPrestamo = mock(RepositorioPrestamo.class);
 		RepositorioLibro repositorioLibro = mock(RepositorioLibro.class);
 
-		when(repositorioPrestamo.obtenerLibroPrestadoPorIsbn(libro.getIsbn())).thenReturn(null);
+		when(repositorioPrestamo.obtenerLibroPrestadoPorIsbn(ISBN)).thenReturn(libro);
 
 		Bibliotecario bibliotecario = new Bibliotecario(repositorioLibro, repositorioPrestamo);
 
 		// act
-		String respuesta = bibliotecario.prestar(libro.getIsbn());
+		String respuesta = bibliotecario.prestar(libro.getIsbn(), NOMBRE_USUARIO);
 
 		// assert
-        Assert.assertEquals(respuesta, Mensajes.EXITO.get());
+        Assert.assertEquals(respuesta, Mensajes.ERROR.get());
 
 	}
 }
