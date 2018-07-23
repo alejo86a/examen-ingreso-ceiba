@@ -1,7 +1,12 @@
 package dominio;
 
+import dominio.excepcion.PrestamoException;
 import dominio.repositorio.RepositorioLibro;
 import dominio.repositorio.RepositorioPrestamo;
+import dominio.utilitarios.Mensajes;
+import sun.rmi.runtime.Log;
+
+import java.util.Date;
 
 public class Bibliotecario {
 
@@ -16,14 +21,24 @@ public class Bibliotecario {
 
 	}
 
-	public void prestar(String isbn) {
+	public String prestar(String isbn) {
+		Libro libro = repositorioLibro.obtenerPorIsbn(isbn);
 
-		throw new UnsupportedOperationException("Método pendiente por implementar");
+		Prestamo prestamo = new Prestamo(new Date(), libro, this.fechaMaxima(new Date(), isbn), "alejo");
+
+		repositorioPrestamo.agregar(prestamo);
+
+		return Mensajes.EXITO.get();
 
 	}
 
 	public boolean esPrestado(String isbn) {
-		return false;
+		return true;
+	}
+
+	//falta implememtar
+	private Date fechaMaxima(Date fechaInicio, String isbn) {
+		return new Date();
 	}
 
 }
