@@ -24,7 +24,7 @@ public class Bibliotecario {
 	public String prestar(String isbn) {
 		Libro libro = repositorioLibro.obtenerPorIsbn(isbn);
 
-		Prestamo prestamo = new Prestamo(new Date(), libro, this.fechaMaxima(new Date(), isbn), "alejo");
+		Prestamo prestamo = new Prestamo(new Date(), libro, "alejo");
 
 		repositorioPrestamo.agregar(prestamo);
 
@@ -34,11 +34,6 @@ public class Bibliotecario {
 
 	public boolean esPrestado(String isbn) {
 		return true;
-	}
-
-	//falta implememtar
-	private Date fechaMaxima(Date fechaInicio, String isbn) {
-		return new Date();
 	}
 
 }
