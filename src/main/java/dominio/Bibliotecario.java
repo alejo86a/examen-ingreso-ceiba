@@ -47,7 +47,7 @@ public class Bibliotecario {
 	public boolean esPrestado(String isbn) {
 
 		Libro libroPrestado = repositorioPrestamo.obtenerLibroPrestadoPorIsbn(isbn);
-		return objPrestamo==null?false:true;
+		return libroPrestado==null?false:true;
 	}
 
 }
